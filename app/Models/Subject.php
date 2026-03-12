@@ -17,4 +17,8 @@ class Subject extends Model
     {
         return $this->hasMany(Thread::class);
     }
+    public function majors()
+    {
+        return $this->belongsToMany(Major::class);
+    }
 }

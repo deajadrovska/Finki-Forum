@@ -49,4 +49,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Thread::class);
     }
+    public function threadLikes()
+    {
+        return $this->hasMany(ThreadLike::class);
+    }
 }

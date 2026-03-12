@@ -1379,3 +1379,7 @@ label, .label {
 .icon-lg { width: 1.5rem;   height: 1.5rem; }
 
 svg { display: inline-block; vertical-align: middle; }
+.category-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}

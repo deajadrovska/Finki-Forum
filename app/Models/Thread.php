@@ -23,4 +23,12 @@ class Thread extends Model
     {
         return $this->belongsTo(Subject::class);
     }
+    public function replies()
+    {
+        return $this->hasMany(Reply::class);
+    }
+    public function likes()
+    {
+        return $this->hasMany(ThreadLike::class);
+    }
 }

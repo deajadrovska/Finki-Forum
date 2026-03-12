@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\SemesterResource\Pages;
-use App\Filament\Resources\SemesterResource\RelationManagers;
-use App\Models\Semester;
+use App\Filament\Resources\MajorResource\Pages;
+use App\Filament\Resources\MajorResource\RelationManagers;
+use App\Models\Major;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,9 +13,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class SemesterResource extends Resource
+class MajorResource extends Resource
 {
-    protected static ?string $model = Semester::class;
+    protected static ?string $model = Major::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -26,15 +26,32 @@ class SemesterResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\TextInput::make('code')
+                    ->label('Shortcut')
+                    ->required()
+                    ->maxLength(10),
             ]);
     }
 
     public static function table(Table $table): Table
     {
+//        return $table
+//            ->columns([
+//                Tables\Columns\TextColumn::make('name')
+//                    ->searchable()
+//                    ->sortable(),
+//                Tables\Columns\TextColumn::make('code')
+//                    ->badge()
+//                    ->sortable(),
+//
+//            ]);
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('code')
+                    ->badge()
                     ->sortable(),
             ])
             ->filters([
@@ -49,6 +66,7 @@ class SemesterResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
+
     }
 
     public static function getRelations(): array
@@ -61,9 +79,9 @@ class SemesterResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListSemesters::route('/'),
-            'create' => Pages\CreateSemester::route('/create'),
-            'edit' => Pages\EditSemester::route('/{record}/edit'),
+            'index' => Pages\ListMajors::route('/'),
+            'create' => Pages\CreateMajor::route('/create'),
+            'edit' => Pages\EditMajor::route('/{record}/edit'),
         ];
     }
 }

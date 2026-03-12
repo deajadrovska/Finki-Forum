@@ -9,4 +9,8 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateThread extends CreateRecord
 {
     protected static string $resource = ThreadResource::class;
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }

@@ -8,7 +8,7 @@ class SubjectController extends Controller
 {
     public function index()
     {
-        $subjects = Subject::with('semester')
+        $subjects = \App\Models\Subject::with(['semester', 'majors'])
             ->withCount('threads')
             ->get();
 
@@ -16,7 +16,12 @@ class SubjectController extends Controller
     }
     public function show($id)
     {
-        $subject = \App\Models\Subject::with('semester')->findOrFail($id);
+        $subject = \App\Models\Subject::with([
+            'semester',
+            'threads.user',
+            'threads.likes',
+            'threads.replies',
+        ])->findOrFail($id);
 
         return view('subjects.show', compact('subject'));
     }

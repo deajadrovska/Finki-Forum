@@ -30,6 +30,10 @@ class SubjectResource extends Resource
                 Forms\Components\Select::make('semester_id')
                     ->relationship('semester', 'name')
                     ->required(),
+                Forms\Components\Select::make('majors')
+                    ->relationship('majors', 'name')
+                    ->multiple()
+                    ->preload(),
             ]);
     }
 
@@ -44,12 +48,15 @@ class SubjectResource extends Resource
                 Tables\Columns\TextColumn::make('semester.name')
                     ->label('Semester')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('majors.name')
+                    ->badge(),
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
