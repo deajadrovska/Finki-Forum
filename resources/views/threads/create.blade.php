@@ -27,7 +27,10 @@
                         <select name="subject_id" id="subject_id" class="select-trigger" style="width:100%;" required>
                             <option value="">Select a subject</option>
                             @foreach($subjects as $subject)
-                                <option value="{{ $subject->id }}" {{ old('subject_id') == $subject->id ? 'selected' : '' }}>
+                                <option
+                                    value="{{ $subject->id }}"
+                                    {{ (old('subject_id', $preselectedSubjectId) == $subject->id) ? 'selected' : '' }}
+                                >
                                     {{ $subject->name }}
                                 </option>
                             @endforeach

@@ -29,7 +29,9 @@ class ThreadController extends Controller
     {
         $subjects = Subject::all();
         $tags = \App\Models\Tag::all();
-        return view('threads.create', compact('subjects', 'tags'));
+        $preselectedSubjectId = request('subject_id');
+
+        return view('threads.create', compact('subjects', 'tags', 'preselectedSubjectId'));
     }
 
     public function store(Request $request)

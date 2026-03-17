@@ -42,15 +42,19 @@
             </nav>
 
             <div class="header-search">
-                <div class="input-with-icon">
-                    <i data-lucide="search" class="input-icon icon"></i>
-                    <input
-                        type="search"
-                        class="input"
-                        placeholder="Search threads, subjects..."
-                        style="background:var(--secondary);border-color:transparent;"
-                    >
-                </div>
+                <form method="GET" action="{{ route('search') }}">
+                    <div class="input-with-icon">
+                        <i data-lucide="search" class="input-icon icon"></i>
+                        <input
+                            type="search"
+                            name="q"
+                            class="input"
+                            placeholder="Search threads, subjects..."
+                            value="{{ request('q') }}"
+                            style="background:var(--secondary);border-color:transparent;"
+                        >
+                    </div>
+                </form>
             </div>
 
             <div class="header-actions">
