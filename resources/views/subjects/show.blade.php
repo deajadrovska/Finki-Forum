@@ -31,7 +31,7 @@
             <h2>Threads</h2>
 
             @auth
-                <a href="{{ route('threads.create') }}" class="btn btn-primary btn-sm">
+                <a href="{{ route('threads.create', ['subject_id' => $subject->id]) }}" class="btn btn-primary btn-sm">
                     <i data-lucide="plus" class="icon-sm"></i>
                     New Thread
                 </a>
