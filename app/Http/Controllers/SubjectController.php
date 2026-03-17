@@ -9,11 +9,13 @@ class SubjectController extends Controller
 {
     public function index()
     {
-        $subjects = Subject::with(['semester', 'majors'])
-            ->withCount('threads')
+        $semesters = \App\Models\Semester::with(['subjects' => function($query) {
+            $query->with('majors')->withCount('threads');
+        }])
+            ->orderBy('name')
             ->get();
 
-        return view('subjects.index', compact('subjects'));
+        return view('subjects.index', compact('semesters'));
     }
 
     public function show($id)
