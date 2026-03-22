@@ -910,7 +910,7 @@ label, .label {
   gap: 0.5rem;
 }
 
-/* ---- Reply Editor ---- */
+/* ---- Comment Editor ---- */
 .reply-editor {
   margin-bottom: 2rem;
 }
@@ -934,7 +934,7 @@ label, .label {
   }
 }
 
-/* ---- Reply Card ---- */
+/* ---- Comment Card ---- */
 .reply-card {
   padding: 1rem 1.25rem;
 }

@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\ThreadResource\Pages;
 
 use App\Filament\Resources\ThreadResource;
-use Filament\Actions;
+use Closure;
 use Filament\Resources\Pages\ListRecords;
 
 class ListThreads extends ListRecords
@@ -12,8 +12,11 @@ class ListThreads extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [
-            Actions\CreateAction::make(),
-        ];
+        return [];
+    }
+
+    protected function getTableRecordUrlUsing(): Closure
+    {
+        return fn ($record) => static::getResource()::getUrl('view', ['record' => $record]);
     }
 }

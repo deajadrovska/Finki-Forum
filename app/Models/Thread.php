@@ -26,9 +26,13 @@ class Thread extends Model
     {
         return $this->belongsTo(Subject::class);
     }
-    public function replies()
+    public function comments()
     {
-        return $this->hasMany(Reply::class);
+        return $this->hasMany(Comment::class)->whereNull('parent_id');
+    }
+    public function allComments()
+    {
+        return $this->hasMany(Comment::class);
     }
     public function likes()
     {
@@ -38,5 +42,9 @@ class Thread extends Model
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'thread_tag');
+    }
+    public function dislikes()
+    {
+        return $this->hasMany(ThreadDislike::class);
     }
 }

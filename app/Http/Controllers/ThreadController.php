@@ -16,13 +16,35 @@ class ThreadController extends Controller
 //    }
     public function show(Thread $thread)
     {
-        $thread->load(['replies.user', 'likes', 'tags']);
+        $thread->load(['user', 'subject', 'likes', 'dislikes', 'tags']);
 
         $isLiked = auth()->check()
             ? $thread->likes->contains('user_id', auth()->id())
             : false;
+        $isDisliked = auth()->check()
+            ? $thread->dislikes->contains('user_id', auth()->id())
+            : false;
+        $comments = $thread->comments()
+            ->with([
+                'user',
+                'likes',
+                'dislikes',
+                'replies.user',
+                'replies.likes',
+                'replies.dislikes',
+            ])
+            ->withCount(['likes', 'dislikes', 'replies'])
+            ->latest()
+            ->get();
+        $isLiked = auth()->check()
+            ? $thread->likes->contains('user_id', auth()->id())
+            : false;
 
-        return view('threads.show', compact('thread', 'isLiked'));
+        $isDisliked = auth()->check()
+            ? $thread->dislikes->contains('user_id', auth()->id())
+            : false;
+
+        return view('threads.show', compact('thread', 'comments', 'isLiked', 'isDisliked'));
     }
 
     public function create()
@@ -32,6 +54,47 @@ class ThreadController extends Controller
         $preselectedSubjectId = request('subject_id');
 
         return view('threads.create', compact('subjects', 'tags', 'preselectedSubjectId'));
+    }
+    public function edit(Thread $thread)
+    {
+        $this->authorize('update', $thread);
+
+        $subjects = \App\Models\Subject::all();
+        $tags = \App\Models\Tag::all();
+
+        return view('threads.edit', compact('thread', 'subjects', 'tags'));
+    }
+
+    public function update(Request $request, Thread $thread)
+    {
+        $this->authorize('update', $thread);
+
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'content' => ['required', 'string'],
+            'subject_id' => ['required', 'exists:subjects,id'],
+            'is_anonymous' => ['nullable', 'boolean'],
+        ]);
+
+        $thread->update([
+            'title' => $validated['title'],
+            'content' => $validated['content'],
+            'subject_id' => $validated['subject_id'],
+            'is_anonymous' => $validated['is_anonymous'] ?? false,
+        ]);
+
+        return redirect()->route('threads.show', $thread)
+            ->with('success', 'Thread updated successfully.');
+    }
+
+    public function destroy(Thread $thread)
+    {
+        $this->authorize('delete', $thread);
+
+        $thread->delete();
+
+        return redirect()->route('subjects.show', $thread->subject_id)
+            ->with('success', 'Thread deleted successfully.');
     }
 
     public function store(Request $request)

@@ -27,5 +27,10 @@ class DatabaseSeeder extends Seeder
             ['email' => 'student@finki.edu.mk'],
             ['name' => 'Test Student', 'password' => bcrypt('password'), 'role' => 'student']
         );
+
+        User::firstOrCreate(
+            ['email' => 'student2@finki.edu.mk'],
+            ['name' => 'Student2', 'password' => bcrypt('password'), 'role' => 'student']
+        );
     }
 }

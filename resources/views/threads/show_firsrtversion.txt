@@ -98,35 +98,41 @@
 
             <div class="post-actions" style="display:flex;gap:0.75rem;flex-wrap:wrap;border-top:1px solid var(--border);padding-top:1rem;">
                 @auth
+{{--                    <form action="{{ route('threads.like', $thread) }}" method="POST" style="margin:0;">--}}
+{{--                        @csrf--}}
+{{--                        <button type="submit" class="btn btn-outline btn-sm">--}}
+{{--                            <i--}}
+{{--                                data-lucide="heart"--}}
+{{--                                class="icon-sm"--}}
+{{--                                style="{{ !empty($isLiked) && $isLiked ? 'fill: currentColor; color: #e11d48;' : '' }}"--}}
+{{--                            ></i>--}}
+{{--                            {{ $thread->likes->count() }}--}}
+{{--                        </button>--}}
+{{--                    </form>--}}
                     <button
                         type="button"
-                        class="btn btn-outline btn-sm reaction-btn"
-                        data-url="/threads/{{ $thread->id }}/like"
-                        data-kind="like"
-                        data-group="thread-{{ $thread->id }}"
+                        class="btn btn-outline btn-sm thread-like-btn"
+                        data-thread-id="{{ $thread->id }}"
+                        data-liked="{{ !empty($isLiked) && $isLiked ? '1' : '0' }}"
                     >
                         <i
                             data-lucide="heart"
-                            class="icon-sm reaction-icon reaction-like-icon"
+                            class="icon-sm thread-like-icon"
                             style="{{ !empty($isLiked) && $isLiked ? 'fill: currentColor; color: #e11d48;' : '' }}"
                         ></i>
-                        <span class="reaction-count reaction-like-count">{{ $thread->likes->count() }}</span>
+                        <span class="thread-like-count">{{ $thread->likes->count() }}</span>
                     </button>
-
-                    <button
-                        type="button"
-                        class="btn btn-outline btn-sm reaction-btn"
-                        data-url="/threads/{{ $thread->id }}/dislike"
-                        data-kind="dislike"
-                        data-group="thread-{{ $thread->id }}"
-                    >
-                        <i
-                            data-lucide="thumbs-down"
-                            class="icon-sm reaction-icon reaction-dislike-icon"
-                            style="{{ !empty($isDisliked) && $isDisliked ? 'color: #2563eb;' : '' }}"
-                        ></i>
-                        <span class="reaction-count reaction-dislike-count">{{ $thread->dislikes->count() }}</span>
-                    </button>
+                    <form action="{{ route('threads.dislike', $thread) }}" method="POST" style="margin:0;">
+                        @csrf
+                        <button type="submit" class="btn btn-outline btn-sm">
+                            <i
+                                data-lucide="thumbs-down"
+                                class="icon-sm"
+                                style="{{ !empty($isDisliked) && $isDisliked ? 'fill: currentColor;' : '' }}"
+                            ></i>
+                            {{ $thread->dislikes->count() }}
+                        </button>
+                    </form>
 
                     <button
                         type="button"
@@ -187,12 +193,7 @@
                 <p>No comments yet.</p>
             @else
                 <div class="stack-sm">
-
                     @foreach($comments as $comment)
-                        @php
-                            $commentLiked = auth()->check() && $comment->likes->contains('user_id', auth()->id());
-                            $commentDisliked = auth()->check() && $comment->dislikes->contains('user_id', auth()->id());
-                        @endphp
                         <div class="card" style="padding: 1rem;">
                             <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:0.75rem;flex-wrap:wrap;">
                                 <div style="display:flex;align-items:center;gap:0.75rem;">
@@ -281,29 +282,21 @@
 
                             @auth
                                 <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-                                    <button
-                                        type="button"
-                                        class="btn btn-outline btn-sm reaction-btn"
-                                        data-url="/comments/{{ $comment->id }}/like"
-                                        data-kind="like"
-                                        data-group="comment-{{ $comment->id }}"
-                                    >
-                                        <i data-lucide="heart" class="icon-sm reaction-icon reaction-like-icon"
-                                           style="{{ $commentLiked ? 'fill: currentColor; color: #e11d48;' : '' }}"></i>
-                                        <span class="reaction-count reaction-like-count">{{ $comment->likes_count }}</span>
-                                    </button>
+                                    <form action="{{ route('comments.like', $comment) }}" method="POST" style="margin:0;">
+                                        @csrf
+                                        <button type="submit" class="btn btn-outline btn-sm">
+                                            <i data-lucide="heart" class="icon-sm"></i>
+                                            {{ $comment->likes_count }}
+                                        </button>
+                                    </form>
 
-                                    <button
-                                        type="button"
-                                        class="btn btn-outline btn-sm reaction-btn"
-                                        data-url="/comments/{{ $comment->id }}/dislike"
-                                        data-kind="dislike"
-                                        data-group="comment-{{ $comment->id }}"
-                                    >
-                                        <i data-lucide="thumbs-down" class="icon-sm reaction-icon reaction-dislike-icon"
-                                           style="{{ $commentDisliked ? 'color: #2563eb;' : '' }}"></i>
-                                        <span class="reaction-count reaction-dislike-count">{{ $comment->dislikes_count ?? 0 }}</span>
-                                    </button>
+                                    <form action="{{ route('comments.dislike', $comment) }}" method="POST" style="margin:0;">
+                                        @csrf
+                                        <button type="submit" class="btn btn-outline btn-sm">
+                                            <i data-lucide="thumbs-down" class="icon-sm"></i>
+                                            {{ $comment->dislikes_count ?? 0 }}
+                                        </button>
+                                    </form>
 
                                     <button
                                         type="button"
@@ -347,10 +340,6 @@
                             @if($comment->replies->isNotEmpty())
                                 <div style="margin-top:1rem; padding-left:1rem; border-left:2px solid var(--border);">
                                     @foreach($comment->replies as $reply)
-                                        @php
-                                            $replyLiked = auth()->check() && $reply->likes->contains('user_id', auth()->id());
-                                            $replyDisliked = auth()->check() && $reply->dislikes->contains('user_id', auth()->id());
-                                        @endphp
                                         <div style="padding:0.75rem 0; border-top:1px solid var(--border);">
                                             <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:0.5rem;">
                                                 <div>
@@ -429,33 +418,21 @@
 
                                             @auth
                                                 <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-                                                    <button
-                                                        type="button"
-                                                        class="btn btn-outline btn-sm reaction-btn"
-                                                        data-url="/comments/{{ $reply->id }}/like"
-                                                        data-kind="like"
-                                                        data-group="reply-{{ $reply->id }}"
-                                                    >
-                                                        <i data-lucide="heart" class="icon-sm reaction-icon reaction-like-icon"
-                                                           style="{{ $replyLiked ? 'fill: currentColor; color: #e11d48;' : '' }}">
+                                                    <form action="{{ route('comments.like', $reply) }}" method="POST" style="margin:0;">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-outline btn-sm">
+                                                            <i data-lucide="heart" class="icon-sm"></i>
+                                                            {{ $reply->likes->count() }}
+                                                        </button>
+                                                    </form>
 
-                                                        </i>
-                                                        <span class="reaction-count reaction-like-count">{{ $reply->likes->count() }}</span>
-                                                    </button>
-
-                                                    <button
-                                                        type="button"
-                                                        class="btn btn-outline btn-sm reaction-btn"
-                                                        data-url="/comments/{{ $reply->id }}/dislike"
-                                                        data-kind="dislike"
-                                                        data-group="reply-{{ $reply->id }}"
-                                                    >
-                                                        <i data-lucide="thumbs-down" class="icon-sm reaction-icon reaction-dislike-icon"
-                                                           style="{{ $replyDisliked ? 'color: #2563eb;' : '' }}">
-
-                                                        </i>
-                                                        <span class="reaction-count reaction-dislike-count">{{ $reply->dislikes->count() }}</span>
-                                                    </button>
+                                                    <form action="{{ route('comments.dislike', $reply) }}" method="POST" style="margin:0;">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-outline btn-sm">
+                                                            <i data-lucide="thumbs-down" class="icon-sm"></i>
+                                                            {{ $reply->dislikes->count() }}
+                                                        </button>
+                                                    </form>
                                                 </div>
                                             @endauth
                                         </div>
@@ -473,88 +450,6 @@
     @auth
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-
-                function setLikeIconState(icon, active) {
-                    if (!icon) return;
-
-                    if (active) {
-                        icon.style.color = '#e11d48';
-                        icon.style.fill = 'currentColor';
-                    } else {
-                        icon.style.color = '';
-                        icon.style.fill = '';
-                    }
-                }
-
-                function setDislikeIconState(icon, active) {
-                    if (!icon) return;
-
-                    if (active) {
-                        icon.style.color = '#2563eb';
-                        icon.style.fill = '';
-                    } else {
-                        icon.style.color = '';
-                        icon.style.fill = '';
-                    }
-                }
-
-                async function handleReaction(button) {
-                    const url = button.dataset.url;
-                    const kind = button.dataset.kind;
-                    const group = button.dataset.group;
-
-                    const groupButtons = document.querySelectorAll(`.reaction-btn[data-group="${group}"]`);
-                    const likeBtn = Array.from(groupButtons).find(btn => btn.dataset.kind === 'like');
-                    const dislikeBtn = Array.from(groupButtons).find(btn => btn.dataset.kind === 'dislike');
-
-                    const likeIcon = likeBtn?.querySelector('.reaction-like-icon');
-                    const dislikeIcon = dislikeBtn?.querySelector('.reaction-dislike-icon');
-                    const likeCount = likeBtn?.querySelector('.reaction-like-count');
-                    const dislikeCount = dislikeBtn?.querySelector('.reaction-dislike-count');
-
-                    try {
-                        const response = await fetch(url, {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': csrfToken,
-                                'X-Requested-With': 'XMLHttpRequest',
-                                'Accept': 'application/json',
-                            },
-                        });
-
-                        if (!response.ok) {
-                            throw new Error('Reaction request failed.');
-                        }
-
-                        const data = await response.json();
-
-                        if (typeof data.likes_count !== 'undefined' && likeCount) {
-                            likeCount.textContent = data.likes_count;
-                        }
-
-                        if (typeof data.dislikes_count !== 'undefined' && dislikeCount) {
-                            dislikeCount.textContent = data.dislikes_count;
-                        }
-
-                        if (kind === 'like') {
-                            setLikeIconState(likeIcon, !!data.liked);
-                            if (data.liked) {
-                                setDislikeIconState(dislikeIcon, false);
-                            }
-                        }
-
-                        if (kind === 'dislike') {
-                            setDislikeIconState(dislikeIcon, !!data.disliked);
-                            if (data.disliked) {
-                                setLikeIconState(likeIcon, false);
-                            }
-                        }
-                    } catch (error) {
-                        console.error(error);
-                    }
-                }
-
                 const toggleButton = document.getElementById('toggle-comment-form');
                 const cancelButton = document.getElementById('cancel-comment-form');
                 const formWrapper = document.getElementById('comment-form-wrapper');
@@ -639,11 +534,46 @@
                         }
                     });
                 });
+            });
 
-                document.querySelectorAll('.reaction-btn').forEach(button => {
-                    button.addEventListener('click', function () {
-                        handleReaction(this);
-                    });
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+            document.querySelectorAll('.thread-like-btn').forEach(button => {
+                button.addEventListener('click', async function () {
+                    const threadId = this.dataset.threadId;
+                    const icon = this.querySelector('.thread-like-icon');
+                    const countEl = this.querySelector('.thread-like-count');
+
+                    try {
+                        const response = await fetch(`/threads/${threadId}/like`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': csrfToken,
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json',
+                            },
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Failed to toggle like.');
+                        }
+
+                        const data = await response.json();
+
+                        countEl.textContent = data.likes_count;
+
+                        if (data.liked) {
+                            icon.style.fill = 'currentColor';
+                            icon.style.color = '#e11d48';
+                            this.dataset.liked = '1';
+                        } else {
+                            icon.style.fill = '';
+                            icon.style.color = '';
+                            this.dataset.liked = '0';
+                        }
+                    } catch (error) {
+                        console.error(error);
+                    }
                 });
             });
         </script>

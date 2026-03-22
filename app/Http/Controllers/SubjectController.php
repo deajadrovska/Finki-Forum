@@ -35,12 +35,15 @@ class SubjectController extends Controller
             'semester',
             'threads.user',
             'threads.likes',
-            'threads.replies',
+            'threads.dislikes',
+            'threads.comments',
             'threads.tags',
-        ])->findOrFail($id);
+        ])
+            ->findOrFail($id);
 
         $tags = Tag::all();
         $selectedTag = request('tag');
+
         $threads = $subject->threads;
 
         if ($selectedTag) {
@@ -48,6 +51,9 @@ class SubjectController extends Controller
                 return $thread->tags->contains('name', $selectedTag);
             });
         }
+
+
+        $threads->loadCount(['likes', 'dislikes', 'comments']);
 
         return view('subjects.show', compact('subject', 'tags', 'threads', 'selectedTag'));
     }

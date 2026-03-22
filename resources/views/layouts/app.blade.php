@@ -2,11 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'FINKI Forum')</title>
     <meta name="description" content="A forum for FINKI students to discuss subjects, threads, experiences, and resources">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+{{--    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>--}}
+    <script src="{{ asset('js/lucide.js') }}"></script>
 </head>
 <body>
 
